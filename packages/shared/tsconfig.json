@@ -3,7 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "types": ["chrome"]
+    "types": ["chrome", "node"],
+    "paths": {
+      "@lib/*": ["lib/*"]
+    }
   },
   "include": ["index.ts", "lib"]
 }
