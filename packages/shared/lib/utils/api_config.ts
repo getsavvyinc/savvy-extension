@@ -1,6 +1,8 @@
 import type { ApiConfig } from './shared-types';
 
+const isDevelopment = typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
+
 export const apiConfig: ApiConfig = {
-  baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://app.getsavvy.so',
+  baseURL: isDevelopment ? 'http://localhost:5173' : 'https://app.getsavvy.so',
   tokenKey: '',
 };
