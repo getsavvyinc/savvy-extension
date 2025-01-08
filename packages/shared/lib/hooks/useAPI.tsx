@@ -1,5 +1,5 @@
 // src/shared/api/hooks.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosHeaderValue } from 'axios';
 import axios from 'axios';
 import { apiConfig } from '@lib/utils/api_config';
@@ -27,11 +27,11 @@ export function useApiClient(): ApiHookResult {
   const [failedQueue, setFailedQueue] = useState<
     Array<{
       resolve: (token: string) => void;
-      reject: (error: any) => void;
+      reject: (error: ApiError) => void;
     }>
   >([]);
 
-  const getAuthToken = async (): Promise<string | null> => {
+  const getAuthToken = useCallback(async (): Promise<string | null> => {
     return new Promise(resolve => {
       chrome.tabs.query(
         {
@@ -48,23 +48,26 @@ export function useApiClient(): ApiHookResult {
         },
       );
     });
-  };
+  }, []);
 
-  const promptLogin = async (): Promise<void> => {
+  const promptLogin = useCallback(async (): Promise<void> => {
     const loginUrl = `${apiConfig.baseURL}/login`;
     await chrome.tabs.create({ url: loginUrl });
-  };
+  }, []);
 
-  const processQueue = (error: any = null): void => {
-    failedQueue.forEach(promise => {
-      if (error) {
-        promise.reject(error);
-      } else {
-        promise.resolve(axiosInstance?.defaults.headers.common['Authorization']?.toString() || '');
-      }
-    });
-    setFailedQueue([]);
-  };
+  const processQueue = useCallback(
+    (error: ApiError | null = null): void => {
+      failedQueue.forEach(promise => {
+        if (error) {
+          promise.reject(error);
+        } else {
+          promise.resolve(axiosInstance?.defaults.headers.common['Authorization']?.toString() || '');
+        }
+      });
+      setFailedQueue([]);
+    },
+    [failedQueue, axiosInstance],
+  );
 
   useEffect(() => {
     const initializeClient = () => {
@@ -121,7 +124,7 @@ export function useApiClient(): ApiHookResult {
               processQueue();
               return instance(originalRequest);
             } catch (refreshError) {
-              processQueue(refreshError);
+              processQueue(refreshError as ApiError);
               return Promise.reject(refreshError);
             } finally {
               setIsRefreshing(false);
@@ -142,7 +145,7 @@ export function useApiClient(): ApiHookResult {
     };
 
     initializeClient();
-  }, []);
+  }, [isRefreshing, processQueue]);
 
   return {
     client: axiosInstance,
