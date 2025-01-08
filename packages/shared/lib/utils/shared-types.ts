@@ -10,3 +10,10 @@ export interface ApiConfig {
   baseURL: string;
   tokenKey: string;
 }
+
+export interface BaseStorage<T> {
+  get: () => Promise<T>;
+  set: (value: T) => Promise<void>;
+  subscribe: (callback: () => void) => () => void;
+  getSnapshot: () => T;
+}

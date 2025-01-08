@@ -2,6 +2,9 @@ import '@src/Popup.css';
 import { useStorage, withErrorBoundary, withSuspense } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import type { ComponentPropsWithoutRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useApiClient } from '@extension/shared/lib/hooks/useAPI';
+import { apiConfig } from '@extension/shared/lib/utils/api_config';
 
 const notificationOptions = {
   type: 'basic',
@@ -76,4 +79,41 @@ const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
   );
 };
 
-export default withErrorBoundary(withSuspense(Popup, <div> Loading ... </div>), <div> Error Occur </div>);
+// src/pages/popup/Popup.tsx
+const TokenStatus = () => {
+  const { client, isReady } = useApiClient();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      if (!isReady) return;
+
+      try {
+        await client?.get('/api/auth/verify');
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLogin();
+  }, [isReady, client]);
+
+  const handleLogin = () => {
+    window.open(apiConfig.baseURL, '_blank');
+  };
+
+  return (
+    <div className="w-64 p-4">
+      {isLoggedIn ? (
+        <div className="font-medium text-green-600">Logged in</div>
+      ) : (
+        <button onClick={handleLogin} className="w-full rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+          Click to login
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default withErrorBoundary(withSuspense(TokenStatus, <div> Loading ... </div>), <div> Error Occur </div>);
