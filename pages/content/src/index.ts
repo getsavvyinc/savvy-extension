@@ -1,12 +1,6 @@
-import { createStorage } from '@extension/storage/lib/base/base';
 import { toggleTheme } from '@src/toggleTheme';
 
 console.log('content script loaded');
-
-// Create storage for the user key
-const userKeyStorage = createStorage<string>('savvy_user_key', '', {
-  liveUpdate: true,
-});
 
 // Function to extract and send user key to background script
 function extractAndSendUserKey() {
@@ -34,6 +28,39 @@ function extractAndSendUserKey() {
 
 // Run initial extraction
 extractAndSendUserKey();
+
+// Create MutationObserver to watch for page changes
+const observer = new MutationObserver(mutations => {
+  for (const mutation of mutations) {
+    if (mutation.type === 'childList') {
+      extractAndSendUserKey();
+      break;
+    }
+  }
+});
+
+// Start observing once body is available
+const startObserver = () => {
+  if (document.body) {
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      characterData: true,
+    });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+      });
+    });
+  }
+};
+
+startObserver();
 
 // Listen for changes to localStorage from other tabs
 window.addEventListener('storage', event => {
@@ -75,4 +102,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   return true;
+});
+
+// Cleanup observer when script is unloaded
+window.addEventListener('unload', () => {
+  observer.disconnect();
 });
