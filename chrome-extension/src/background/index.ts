@@ -9,7 +9,7 @@ console.log('background loaded');
 console.log("Edit 'chrome-extension/src/background/index.ts' and save to reload.");
 
 // Listen for messages from content script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
   if (message.type === 'SAVE_USER_KEY') {
     console.log(message.payload, 'message.payload', message.type, 'message.type');
     void tokenStorage.set(message.payload);
@@ -17,21 +17,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-async function getUserSavvyToken(): Promise<string | null> {
-  try {
-    const userKey = await tokenStorage.get();
-    return userKey || null;
-  } catch (error) {
-    console.error('Error getting Savvy token:', error);
-    return null;
-  }
-}
-
 // Make side panel persist across all sites
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
 // Optional: Set the side panel to be available on all URLs
-chrome.tabs.onUpdated.addListener((tabId, info, tab) => {
+chrome.tabs.onUpdated.addListener((tabId, info, _tab) => {
   if (info.status === 'complete') {
     chrome.sidePanel.setOptions({
       tabId,
