@@ -16,6 +16,7 @@ const userKeyStorage = createStorage<string>('savvy_user_key', '', {
 // Listen for messages from content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'SAVE_USER_KEY') {
+    console.log(message.payload, 'message.payload', message.type, 'message.type');
     void userKeyStorage.set(message.payload);
     console.log('Savvy user key saved to extension storage');
   }
