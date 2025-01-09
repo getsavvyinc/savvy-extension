@@ -2,8 +2,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosHeaderValue } from 'axios';
 import axios from 'axios';
-import { apiConfig } from '@lib/utils/api_config';
-import type { ApiError } from '@lib/utils/shared-types';
+import { apiConfig } from '../utils/api_config';
+import type { ApiError } from '../utils/shared-types';
 
 interface ApiHookResult {
   client: AxiosInstance | null;
@@ -23,6 +23,7 @@ export interface ApiErrorResponse {
 
 export function useApiClient(): ApiHookResult {
   const [axiosInstance, setAxiosInstance] = useState<AxiosInstance | null>(null);
+  const [isReady, setIsReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [failedQueue, setFailedQueue] = useState<
     Array<{
@@ -33,16 +34,19 @@ export function useApiClient(): ApiHookResult {
 
   const getAuthToken = useCallback(async (): Promise<string | null> => {
     return new Promise(resolve => {
+      const urlPattern = `${apiConfig.baseURL}/*`;
       chrome.tabs.query(
         {
-          url: ['https://app.getsavvy.so/*', 'http://localhost:5173/*'],
+          url: urlPattern,
         },
         tabs => {
           if (tabs.length > 0) {
-            chrome.tabs.sendMessage(tabs[0].id!, { type: 'GET_AUTH_TOKEN' }, response =>
-              resolve(response?.token || null),
-            );
+            chrome.tabs.sendMessage(tabs[tabs.length - 1].id!, { type: 'GET_AUTH_TOKEN' }, response => {
+              console.log('got response object:', response);
+              resolve(response?.token || null);
+            });
           } else {
+            console.log('no matching tabs', tabs);
             resolve(null);
           }
         },
@@ -52,6 +56,7 @@ export function useApiClient(): ApiHookResult {
 
   const promptLogin = useCallback(async (): Promise<void> => {
     const loginUrl = `${apiConfig.baseURL}/login`;
+    console.log('promptLogin', loginUrl);
     await chrome.tabs.create({ url: loginUrl });
   }, []);
 
@@ -69,8 +74,19 @@ export function useApiClient(): ApiHookResult {
     [failedQueue, axiosInstance],
   );
 
+  const validateToken = useCallback(async (instance: AxiosInstance) => {
+    try {
+      console.log('validateToken');
+      await instance.get('/api/v1/whoami');
+      setIsReady(true);
+    } catch (error) {
+      setIsReady(false);
+      // The 401 interceptor will handle the promptLogin if needed
+    }
+  }, []);
+
   useEffect(() => {
-    const initializeClient = () => {
+    const initializeClient = async () => {
       const instance = axios.create({
         baseURL: apiConfig.baseURL,
       });
@@ -94,6 +110,7 @@ export function useApiClient(): ApiHookResult {
         async (error: AxiosError<ApiErrorResponse>) => {
           const originalRequest = error.config! as ExtendedAxiosRequestConfig;
           const status = error.response?.status;
+          console.log('status', status);
 
           if (status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
@@ -111,6 +128,7 @@ export function useApiClient(): ApiHookResult {
             originalRequest._retry = true;
 
             try {
+              console.log('promptLogin');
               await promptLogin();
               const newToken = await getAuthToken();
 
@@ -142,13 +160,22 @@ export function useApiClient(): ApiHookResult {
       );
 
       setAxiosInstance(instance);
+
+      // Validate token on initialization
+      const token = await getAuthToken();
+      if (token) {
+        await validateToken(instance);
+      } else {
+        await promptLogin();
+      }
     };
 
-    initializeClient();
-  }, [isRefreshing, processQueue]);
+    void initializeClient();
+    console.log(process.env.NODE_ENV, process.env.__DEV__);
+  }, [validateToken, getAuthToken]);
 
   return {
     client: axiosInstance,
-    isReady: !!axiosInstance,
+    isReady,
   };
 }

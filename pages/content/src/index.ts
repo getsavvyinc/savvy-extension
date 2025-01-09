@@ -11,14 +11,20 @@ const userKeyStorage = createStorage<string>('savvy_user_key', '', {
 // Function to extract and send user key to background script
 function extractAndSendUserKey() {
   try {
+    console.log('extractAndSendUserKey');
     const savvyUserData = localStorage.getItem('savvy_user');
-    if (!savvyUserData) return;
+    console.log('savvyUserData', savvyUserData);
+    if (!savvyUserData) {
+      console.log('no savvy user data');
+      return;
+    }
 
     const userData = JSON.parse(savvyUserData);
-    if (userData?.user) {
+    if (userData?.token) {
+      console.log('sending user key to background script');
       chrome.runtime.sendMessage({
         type: 'SAVE_USER_KEY',
-        payload: userData.user,
+        payload: userData.token,
       });
     }
   } catch (error) {
@@ -27,7 +33,7 @@ function extractAndSendUserKey() {
 }
 
 // Run initial extraction
-void extractAndSendUserKey();
+extractAndSendUserKey();
 
 // Listen for changes to localStorage from other tabs
 window.addEventListener('storage', event => {
@@ -46,7 +52,7 @@ localStorage.setItem = function (key: string, value: string) {
 };
 
 // Original theme toggle
-void toggleTheme();
+toggleTheme();
 
 // Listen for messages from the extension
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -54,12 +60,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
       const savvyUserData = localStorage.getItem('savvy_user');
       if (!savvyUserData) {
+        console.log('no savvy user data');
         sendResponse({ token: null });
         return true;
       }
 
       const userData = JSON.parse(savvyUserData);
-      sendResponse({ token: userData?.user || null });
+      console.log('my userData', userData);
+      sendResponse({ token: userData?.token || null });
     } catch (error) {
       console.error('Error getting auth token:', error);
       sendResponse({ token: null });
