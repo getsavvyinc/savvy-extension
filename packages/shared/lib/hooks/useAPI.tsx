@@ -2,8 +2,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { AxiosInstance, AxiosError, InternalAxiosRequestConfig, AxiosHeaderValue } from 'axios';
 import axios from 'axios';
-import { apiConfig } from '../utils/api_config';
+import { config } from '../utils/api_config';
 import type { ApiError } from '../utils/shared-types';
+import { useStorage } from './useStorage';
+import { tokenStorage } from '@extension/storage';
 
 interface ApiHookResult {
   client: AxiosInstance | null;
@@ -31,31 +33,36 @@ export function useApiClient(): ApiHookResult {
       reject: (error: ApiError) => void;
     }>
   >([]);
+  const storedToken = useStorage(tokenStorage); // Use the storage hook
 
   const getAuthToken = useCallback(async (): Promise<string | null> => {
+    if (storedToken) {
+      console.log('getAuthToken from storage', storedToken);
+      return storedToken;
+    }
+
+    // Fallback to querying tabs if no token in storage
     return new Promise(resolve => {
-      const urlPattern = `${apiConfig.baseURL}/*`;
-      chrome.tabs.query(
-        {
-          url: urlPattern,
-        },
-        tabs => {
-          if (tabs.length > 0) {
-            chrome.tabs.sendMessage(tabs[tabs.length - 1].id!, { type: 'GET_AUTH_TOKEN' }, response => {
-              console.log('got response object:', response);
-              resolve(response?.token || null);
-            });
-          } else {
-            console.log('no matching tabs', tabs);
-            resolve(null);
-          }
-        },
-      );
+      const urlPattern = `${config.dashboardURL}/*`;
+      chrome.tabs.query({ url: urlPattern }, tabs => {
+        if (tabs.length > 0) {
+          chrome.tabs.sendMessage(tabs[tabs.length - 1].id!, { type: 'GET_AUTH_TOKEN' }, response => {
+            if (response?.token) {
+              console.log('saving token to storage', response.token);
+              tokenStorage.set(response.token); // Save token to storage
+            }
+            resolve(response?.token || null);
+          });
+        } else {
+          console.log('no matching tabs', tabs);
+          resolve(null);
+        }
+      });
     });
   }, []);
 
   const promptLogin = useCallback(async (): Promise<void> => {
-    const loginUrl = `${apiConfig.baseURL}/login`;
+    const loginUrl = `${config.dashboardURL}/login`;
     console.log('promptLogin', loginUrl);
     await chrome.tabs.create({ url: loginUrl });
   }, []);
@@ -77,9 +84,11 @@ export function useApiClient(): ApiHookResult {
   const validateToken = useCallback(async (instance: AxiosInstance) => {
     try {
       console.log('validateToken');
-      await instance.get('/api/v1/whoami');
+      const response = await instance.get('/api/v1/whoami');
+      console.log('validateToken success');
       setIsReady(true);
     } catch (error) {
+      console.log('validateToken error', error);
       setIsReady(false);
       // The 401 interceptor will handle the promptLogin if needed
     }
@@ -88,7 +97,7 @@ export function useApiClient(): ApiHookResult {
   useEffect(() => {
     const initializeClient = async () => {
       const instance = axios.create({
-        baseURL: apiConfig.baseURL,
+        baseURL: config.apiURL,
       });
 
       instance.interceptors.request.use(
@@ -164,14 +173,17 @@ export function useApiClient(): ApiHookResult {
       // Validate token on initialization
       const token = await getAuthToken();
       if (token) {
+        console.log('validateToken on initialization');
         await validateToken(instance);
       } else {
+        console.log('promptLogin on initialization');
         await promptLogin();
+        await validateToken(instance);
       }
     };
 
     void initializeClient();
-    console.log(process.env.NODE_ENV, process.env.__DEV__);
+    console.log('useAPI', process.env.NODE_ENV, process.env.__DEV__);
   }, [validateToken, getAuthToken]);
 
   return {

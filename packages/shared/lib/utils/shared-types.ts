@@ -6,8 +6,9 @@ export interface ApiError {
   code?: string;
 }
 
-export interface ApiConfig {
-  baseURL: string;
+export interface Config {
+  dashboardURL: string;
+  apiURL: string;
   tokenKey: string;
 }
 
