@@ -42,6 +42,7 @@ const manifest = withSidePanel({
   host_permissions: [
     'https://app.getsavvy.so/*',
     'http://localhost:5173/*',
+    'http://localhost:8765/*',
     'https://www.example.com/*',
     'https://api.getsavvy.so/*',
   ],
