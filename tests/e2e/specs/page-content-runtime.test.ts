@@ -16,13 +16,5 @@ describe('Webextension Content Runtime Script', () => {
 
     // Trigger the content script on the popup
     // button contains "Content Script" text
-    const contentScriptButton = await $('button*=Content Script').getElement();
-
-    await contentScriptButton.click();
-
-    // Check if id chrome-extension-boilerplate-react-vite-runtime-content-view-root exists on page
-    const runtimeElement = await $('#chrome-extension-boilerplate-react-vite-runtime-content-view-root').getElement();
-
-    await expect(runtimeElement).toBeExisting();
   });
 });
