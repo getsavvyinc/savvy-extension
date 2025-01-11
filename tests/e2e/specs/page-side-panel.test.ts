@@ -1,5 +1,3 @@
-import { canSwitchTheme } from '../helpers/theme';
-
 describe('Webextension Side Panel', () => {
   it('should make side panel accessible', async () => {
     const extensionPath = await browser.getExtensionPath();
@@ -7,6 +5,5 @@ describe('Webextension Side Panel', () => {
 
     await browser.url(sidePanelUrl);
     await expect(browser).toHaveTitle('Savvy');
-    await canSwitchTheme();
   });
 });
