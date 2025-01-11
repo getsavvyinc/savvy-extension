@@ -6,7 +6,7 @@ describe('Webextension Side Panel', () => {
     const sidePanelUrl = `${extensionPath}/side-panel/index.html`;
 
     await browser.url(sidePanelUrl);
-    await expect(browser).toHaveTitle('Side Panel');
+    await expect(browser).toHaveTitle('Savvy');
     await canSwitchTheme();
   });
 });
