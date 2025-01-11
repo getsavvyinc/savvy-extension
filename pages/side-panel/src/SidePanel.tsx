@@ -9,14 +9,11 @@ const SidePanel = () => {
   const [error, setError] = useState<string>('');
   const [requestCount, setRequestCount] = useState(0);
   useEffect(() => {
-    console.log('Client state:', client);
     if (!client) return;
     const pollHello = async () => {
       try {
-        console.log('Making request with client:', client);
         setRequestCount(prevCount => prevCount + 1);
         const response = await client.get('/hello');
-        console.log('Response:', response.data);
         setResponse(response.data);
         setError('');
       } catch (err) {
@@ -33,12 +30,12 @@ const SidePanel = () => {
 
   return (
     <div className="w-64 p-4">
-      <h2 className="font-medium mb-2">Local API Response:</h2>
-      <div className="text-sm text-gray-600 mb-2">Requests made: {requestCount}</div>
+      <h2 className="mb-2 font-medium">Local API Response:</h2>
+      <div className="mb-2 text-sm text-gray-600">Requests made: {requestCount}</div>
       {error ? (
         <div className="text-red-600">{error}</div>
       ) : (
-        <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">{response || 'Loading...'}</pre>
+        <pre className="overflow-auto rounded bg-gray-100 p-2 text-sm">{response || 'Loading...'}</pre>
       )}
     </div>
   );
