@@ -31,16 +31,7 @@ const SidePanel = () => {
 
   return (
     <div className="w-64">
-      <HistoryViewer whitelist={['github.com', 'stackoverflow.com', 'x.com', 'savvy.so']} />
-      <div className="w-64 p-4">
-        <h2 className="mb-2 font-medium">Local API Response:</h2>
-        <div className="mb-2 text-sm text-gray-600">Requests made: {requestCount}</div>
-        {error ? (
-          <div className="text-red-600">{error}</div>
-        ) : (
-          <pre className="overflow-auto rounded bg-gray-100 p-2 text-sm">{response || 'Loading...'}</pre>
-        )}
-      </div>
+      <HistoryViewer />
     </div>
   );
 };
