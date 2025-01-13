@@ -46,7 +46,7 @@ const manifest = withSidePanel({
     'https://www.example.com/*',
     'https://api.getsavvy.so/*',
   ],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications'],
+  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'history'],
   options_page: 'options/index.html',
   background: {
     service_worker: 'background.iife.js',
