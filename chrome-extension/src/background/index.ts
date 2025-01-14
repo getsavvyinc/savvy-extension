@@ -1,5 +1,4 @@
 import 'webextension-polyfill';
-import { exampleThemeStorage, tokenStorage } from '@extension/storage';
 
 // Handle extension icon click
 chrome.action.onClicked.addListener(async tab => {
