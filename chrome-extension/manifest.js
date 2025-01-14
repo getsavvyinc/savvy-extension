@@ -39,15 +39,8 @@ const manifest = withSidePanel({
   name: 'Savvy',
   version: packageJson.version,
   description: 'Create, Share, and Run Worfklows from your browser & CLI',
-  host_permissions: [
-    'https://app.getsavvy.so/*',
-    'http://localhost:5173/*',
-    'http://localhost:8765/*',
-    'https://www.example.com/*',
-    'https://api.getsavvy.so/*',
-  ],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'history'],
-  options_page: 'options/index.html',
+  host_permissions: ['http://localhost:8765/*', 'https://www.example.com/*'],
+  permissions: ['storage', 'scripting', 'tabs', 'history'],
   background: {
     service_worker: 'background.iife.js',
     type: 'module',
@@ -63,7 +56,7 @@ const manifest = withSidePanel({
   },
   content_scripts: [
     {
-      matches: ['https://app.getsavvy.so/*', 'http://localhost:5173/*', 'https://www.example.com/*'],
+      matches: ['https://www.example.com/*'],
       js: ['content/index.iife.js'],
     },
   ],
