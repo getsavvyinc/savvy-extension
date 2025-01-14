@@ -6,6 +6,7 @@ import { Toaster } from '@src/components/ui/toaster';
 import { Badge } from '@src/components/ui/badge';
 import { ExternalLink, ChevronRight } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
+import { useLocalClient } from '@extension/shared/lib/hooks/useAPI';
 
 interface HistoryViewerProps {}
 
@@ -130,6 +131,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const allowedDomains = ALLOWED_DOMAINS;
+  const { client } = useLocalClient();
   const { toast } = useToast();
 
   const fetchHistory = useCallback(async () => {
@@ -172,23 +174,12 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   const handleSave = async () => {
     const selectedItems = history.filter(item => item.isSelected);
     try {
-      const response = await fetch('http://localhost:8765/history', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(selectedItems),
+      const response = await client.post('/history', selectedItems);
+      toast({
+        title: 'History saved',
+        description: 'Your selected history items have been saved successfully.',
+        duration: 3000,
       });
-      if (response.ok) {
-        console.log('History saved successfully');
-        toast({
-          title: 'History saved',
-          description: 'Your selected history items have been saved successfully.',
-          duration: 3000,
-        });
-      } else {
-        throw new Error('Failed to save history');
-      }
     } catch (error) {
       console.error('Error saving history:', error);
       toast({
