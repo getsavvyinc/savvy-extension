@@ -5,6 +5,7 @@ import { useToast } from '@src/hooks/use-toast';
 import { Toaster } from '@src/components/ui/toaster';
 import { Badge } from '@src/components/ui/badge';
 import { ExternalLink, ChevronRight } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
 
 interface HistoryViewerProps {}
 
@@ -166,16 +167,18 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
     <div className="p-4">
       <div className="mb-4 flex items-center">
         <label className="text-sm font-medium text-gray-700 mr-2">Time Range:</label>
-        <select
-          className="rounded border border-gray-300 p-2 text-sm"
-          value={selectedHours}
-          onChange={e => setSelectedHours(Number(e.target.value))}>
-          {TIME_RANGES.map(({ label, hours }) => (
-            <option key={hours} value={hours}>
-              Last {label}
-            </option>
-          ))}
-        </select>
+        <Select value={selectedHours.toString()} onValueChange={value => setSelectedHours(Number(value))}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select time range" />
+          </SelectTrigger>
+          <SelectContent>
+            {TIME_RANGES.map(({ label, hours }) => (
+              <SelectItem key={hours} value={hours.toString()} className="focus:text-primary">
+                Last {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {loading ? (
