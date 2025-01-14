@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type { AxiosInstance } from 'axios';
 import axios from 'axios';
 interface LocalApiHookResult {
-  client: AxiosInstance | null;
+  client: AxiosInstance;
 }
 
 export function useLocalClient(): LocalApiHookResult {
