@@ -1,7 +1,5 @@
 import '@src/SidePanel.css';
 import { withErrorBoundary, withSuspense } from '@extension/shared';
-import { useEffect, useState } from 'react';
-import { useLocalClient } from '@extension/shared/lib/hooks/useAPI';
 import { HistoryViewer } from './components/HistoryViewer';
 
 const SidePanel = () => {
