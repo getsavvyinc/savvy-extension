@@ -174,7 +174,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   const handleSave = async () => {
     const selectedItems = history.filter(item => item.isSelected);
     try {
-      const response = await client.post('/history', selectedItems);
+      await client.post('/history', selectedItems);
       toast({
         title: 'History saved',
         description: 'Your selected history items have been saved successfully.',
@@ -194,7 +194,9 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center">
-        <label className="text-sm font-medium text-gray-700 mr-2">Time Range:</label>
+        <label htmlFor="time-range" className="text-sm font-medium text-gray-700 mr-2">
+          Time Range:
+        </label>
         <Select value={selectedHours.toString()} onValueChange={value => setSelectedHours(Number(value))}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time range" />
