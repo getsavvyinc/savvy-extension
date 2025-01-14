@@ -30,7 +30,7 @@ const SidePanel = () => {
   }, [client]);
 
   return (
-    <div className="w-64">
+    <div className="w-full">
       <HistoryViewer />
     </div>
   );

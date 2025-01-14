@@ -77,6 +77,14 @@ const ALLOWED_DOMAINS = [
   'devops',
 ];
 
+const getHostname = (url: string) => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+};
+
 export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   const [selectedHours, setSelectedHours] = useState<number>(1);
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -186,7 +194,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
             </div>
           )}
           {history.map((item, index) => (
-            <div key={index} className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-gray-50">
+            <div key={index} className="flex items-center rounded p-3 shadow-sm hover:border-2 hover:border-primary/10">
               <Checkbox
                 id={`item-${index}`}
                 checked={item.isSelected}
@@ -194,16 +202,42 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                 className="mr-2"
               />
               <label htmlFor={`item-${index}`} className="flex-grow cursor-pointer">
-                <div className="text-sm font-medium text-blue-600 hover:underline">{item.title || item.url}</div>
+                <div className="text-sm font-medium text-[var(--foreground)] hover:underline hover:underline-offset-4 hover:decoration-primary">
+                  {item.title || item.url}
+                </div>
+                <div className="text-xs text-gray-500">{new Date(item.lastVisitTime!).toLocaleString()}</div>
+                <div className="text-sm font-medium text-blue-600 hover:underline">
+                  {item.title || getHostname(item.url || '')}
+                </div>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gray-500 hover:underline">
+                  {item.url}
+                </a>
                 <div className="text-xs text-gray-500">{new Date(item.lastVisitTime!).toLocaleString()}</div>
               </label>
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-2"
+                aria-label={`Visit ${getHostname(item.url || '')}`}>
+                <Badge variant="secondary" className="cursor-pointer">
+                  Visit <ExternalLink className="w-3 h-3 ml-1 inline" />
+                </Badge>
+              </a>
             </div>
           ))}
           {history.length === 0 && <div className="text-gray-600">No history found for the selected domains</div>}
         </div>
       )}
 
-      <Button onClick={handleSave} className="mt-4 w-full" disabled={!history.some(item => item.isSelected)}>
+      <Button
+        onClick={handleSave}
+        className="mt-4 w-full bg-primary text-white"
+        disabled={!history.some(item => item.isSelected)}>
         Save Selected History
       </Button>
 
