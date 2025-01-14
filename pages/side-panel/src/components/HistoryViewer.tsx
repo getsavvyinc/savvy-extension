@@ -3,6 +3,8 @@ import { Button } from '@src/components/ui/button';
 import { Checkbox } from '@src/components/ui/checkbox';
 import { useToast } from '@src/hooks/use-toast';
 import { Toaster } from '@src/components/ui/toaster';
+import { Badge } from '@src/components/ui/badge';
+import { ExternalLink, ChevronRight } from 'lucide-react';
 
 interface HistoryViewerProps {}
 
@@ -194,18 +196,14 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
             </div>
           )}
           {history.map((item, index) => (
-            <div key={index} className="flex items-center rounded p-3 shadow-sm hover:border-2 hover:border-primary/10">
+            <div key={index} className="flex items-center rounded p-3 shadow-sm hover:bg-gray-50">
               <Checkbox
                 id={`item-${index}`}
                 checked={item.isSelected}
                 onCheckedChange={() => handleItemSelect(index)}
-                className="mr-2"
+                className="mr-2 data-[state=checked]:bg-primary/10"
               />
               <label htmlFor={`item-${index}`} className="flex-grow cursor-pointer">
-                <div className="text-sm font-medium text-[var(--foreground)] hover:underline hover:underline-offset-4 hover:decoration-primary">
-                  {item.title || item.url}
-                </div>
-                <div className="text-xs text-gray-500">{new Date(item.lastVisitTime!).toLocaleString()}</div>
                 <div className="text-sm font-medium text-blue-600 hover:underline">
                   {item.title || getHostname(item.url || '')}
                 </div>
@@ -224,7 +222,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                 rel="noopener noreferrer"
                 className="ml-2"
                 aria-label={`Visit ${getHostname(item.url || '')}`}>
-                <Badge variant="secondary" className="cursor-pointer">
+                <Badge className="cursor-pointer bg-primary/10 text-black hover:bg-primary hover:text-white">
                   Visit <ExternalLink className="w-3 h-3 ml-1 inline" />
                 </Badge>
               </a>
@@ -238,6 +236,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         onClick={handleSave}
         className="mt-4 w-full bg-primary text-white"
         disabled={!history.some(item => item.isSelected)}>
+        <ChevronRight className="w-4 h-4 mr-1 inline" />
         Save Selected History
       </Button>
 
