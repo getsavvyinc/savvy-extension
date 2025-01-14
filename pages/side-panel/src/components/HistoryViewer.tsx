@@ -3,16 +3,18 @@ import { Button } from '@src/components/ui/button';
 import { Checkbox } from '@src/components/ui/checkbox';
 import { useToast } from '@src/hooks/use-toast';
 import { Toaster } from '@src/components/ui/toaster';
+import { ToastAction } from '@src/components/ui/toast';
 import { Badge } from '@src/components/ui/badge';
-import { ExternalLink, ChevronRight } from 'lucide-react';
+import { ExternalLink, ChevronRight, ClipboardIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
 import { useLocalClient } from '@extension/shared/lib/hooks/useAPI';
-
-interface HistoryViewerProps {}
+import { isAxiosError } from 'axios';
 
 interface HistoryItem extends chrome.history.HistoryItem {
   isSelected?: boolean;
 }
+
+interface HistoryViewerProps {} // Empty interface since component takes no props
 
 const TIME_RANGES = [
   { label: '30 mins', hours: 0.5 },
@@ -180,14 +182,34 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         description: 'Your selected history items have been saved successfully.',
         duration: 3000,
       });
-    } catch (error) {
-      console.error('Error saving history:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Error saving history',
-        description: 'An error occurred while saving your history. Please try again.',
-        duration: 5000,
-      });
+    } catch (error: unknown) {
+      const isConnectionError = isAxiosError(error) && (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED');
+      if (isConnectionError) {
+        toast({
+          title: "Can't Connect to Savvy",
+          variant: 'destructive',
+          duration: Infinity,
+          description: (
+            <span className="text-pretty">
+              {' '}
+              Run <strong>savvy record history</strong> in your terminal and try again.
+            </span>
+          ),
+          action: (
+            <ToastAction altText="Copy Command" onClick={() => navigator.clipboard.writeText('savvy record history')}>
+              <ClipboardIcon className="w-4 h-4 mr-1 inline" /> Copy Command
+            </ToastAction>
+          ),
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description:
+            'An error occurred while saving your history. Please try again or contact us at support@getsavvy.so',
+          duration: 5000,
+        });
+      }
     }
   };
 
@@ -272,7 +294,6 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         <ChevronRight className="w-4 h-4 mr-1 inline" />
         Save Selected History
       </Button>
-
       <Toaster />
     </div>
   );
