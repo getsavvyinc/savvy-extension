@@ -45,6 +45,12 @@ const ALLOWED_DOMAINS = [
   'sentry',
   'bugsnag',
   'raygun',
+  'signoz',
+  'harness',
+  'metabase',
+  'mode',
+  'posthog',
+  'postman',
 
   // Cloud platforms
   'aws.', // Matches aws.amazon.com, aws.internal etc
@@ -53,6 +59,18 @@ const ALLOWED_DOMAINS = [
   'cloud.google',
   'gcp', // Common abbreviation for Google Cloud Platform
   'azure',
+  'render',
+  'railway',
+  'vercel',
+  'northflank',
+  'fly.io',
+  'jam.dev',
+  'netlify',
+
+  // ai tools
+  'julius',
+  'openai.com',
+  'claude.ai',
 
   // Monitoring & APM
   'grafana',
@@ -60,6 +78,7 @@ const ALLOWED_DOMAINS = [
   'prometheus',
   'kibana',
   'elasticsearch',
+  'honeycomb.io',
   'elk', // Common abbreviation for Elasticsearch, Logstash, Kibana
 
   // CI/CD
@@ -67,6 +86,24 @@ const ALLOWED_DOMAINS = [
   'circleci',
   'travis',
   'teamcity',
+  'ci.', // The dot after ci is important to avoid false positives
+
+  // Support tools
+  'intercom',
+  'zendesk',
+  'salesforce',
+  'sfdc',
+  'freshdesk',
+  'pylon',
+  'front',
+
+  //incident & status page tools
+  'incident',
+  'opsgenie',
+  'atlassian',
+  'pagerduty',
+  'statuspage',
+  'status.',
 
   // Common internal domains
   'monitoring',
