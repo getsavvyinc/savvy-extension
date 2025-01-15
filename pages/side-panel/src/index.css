@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Update the font-face declaration to use local file */
+@font-face {
+  font-family: 'Inter';
+  src: url('./assets/fonts/Inter-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -35,6 +43,8 @@
     --color-3: 210 100% 63%;
     --color-4: 195 100% 63%;
     --color-5: 90 100% 63%;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
   }
 
   .dark {
