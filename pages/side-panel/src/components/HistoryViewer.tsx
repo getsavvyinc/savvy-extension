@@ -215,86 +215,94 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center">
-        <label htmlFor="time-range" className="text-sm font-medium text-gray-700 mr-2">
-          Time Range:
-        </label>
-        <Select value={selectedHours.toString()} onValueChange={value => setSelectedHours(Number(value))}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select time range" />
-          </SelectTrigger>
-          <SelectContent>
-            {TIME_RANGES.map(({ label, hours }) => (
-              <SelectItem key={hours} value={hours.toString()} className="focus:text-primary">
-                Last {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <div className="flex flex-col max-h-screen">
+      <div className="p-4">
+        <div className="flex items-center font-light">
+          <label htmlFor="time-range" className="text-sm font-normal text-gray-700 mr-2">
+            Time Range
+          </label>
+          <Select value={selectedHours.toString()} onValueChange={value => setSelectedHours(Number(value))}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select time range" />
+            </SelectTrigger>
+            <SelectContent className="font-light">
+              {TIME_RANGES.map(({ label, hours }) => (
+                <SelectItem key={hours} value={hours.toString()} className="focus:text-primary">
+                  Last {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      {loading ? (
-        <div className="text-gray-600">Loading history...</div>
-      ) : (
-        <div className="space-y-2 h-4/5 overflow-y-auto">
-          {!loading && history.length >= 2 && (
-            <div className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-gray-50 mb-2">
-              <Checkbox
-                id="select-all"
-                checked={history.every(item => item.isSelected)}
-                onCheckedChange={handleSelectAll}
-                className="mr-2"
-              />
-              <label htmlFor="select-all" className="flex-grow cursor-pointer">
-                <div className="text-sm font-medium text-gray-700">Select All</div>
-              </label>
-            </div>
-          )}
-          {history.map((item, index) => (
-            <div key={index} className="flex items-center rounded p-3 shadow-sm hover:bg-gray-50">
-              <Checkbox
-                id={`item-${index}`}
-                checked={item.isSelected}
-                onCheckedChange={() => handleItemSelect(index)}
-                className="mr-2 data-[state=checked]:bg-primary/10"
-              />
-              <label htmlFor={`item-${index}`} className="flex-grow cursor-pointer">
-                <div className="text-sm font-medium text-blue-600 hover:underline">
-                  {item.title || getHostname(item.url || '')}
-                </div>
+      <div className="flex-1 overflow-auto p-4">
+        {loading ? (
+          <div className="text-gray-600">Loading history...</div>
+        ) : (
+          <div className="space-y-2">
+            {!loading && history.length >= 2 && (
+              <div className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-gray-50 mb-2">
+                <Checkbox
+                  id="select-all"
+                  checked={history.every(item => item.isSelected)}
+                  onCheckedChange={handleSelectAll}
+                  className="mr-2 data-[state=checked]:bg-primary/10"
+                />
+                <label htmlFor="select-all" className="flex-grow cursor-pointer">
+                  <div className="text-sm font-light text-gray-700">Select All</div>
+                </label>
+              </div>
+            )}
+            {history.map((item, index) => (
+              <div key={index} className="flex items-center rounded p-3 shadow-sm hover:bg-primary/10">
+                <Checkbox
+                  id={`item-${index}`}
+                  checked={item.isSelected}
+                  onCheckedChange={() => handleItemSelect(index)}
+                  className="mr-2 data-[state=checked]:bg-primary/10"
+                />
+                <label htmlFor={`item-${index}`} className="flex-grow cursor-pointer">
+                  <div className="text-sm font-normal text-blue-600 hover:underline">
+                    {item.title || getHostname(item.url || '')}
+                  </div>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-light text-xs text-gray-500 hover:underline">
+                    {item.url}
+                  </a>
+                  <div className="text-xs font-thin text-gray-500">
+                    {new Date(item.lastVisitTime!).toLocaleString()}
+                  </div>
+                </label>
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-gray-500 hover:underline">
-                  {item.url}
+                  className="ml-2"
+                  aria-label={`Visit ${getHostname(item.url || '')}`}>
+                  <Badge className="cursor-pointer font-normal bg-primary/10 text-black hover:bg-primary hover:text-white">
+                    Visit <ExternalLink className="w-3 h-3 ml-1 inline" />
+                  </Badge>
                 </a>
-                <div className="text-xs text-gray-500">{new Date(item.lastVisitTime!).toLocaleString()}</div>
-              </label>
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ml-2"
-                aria-label={`Visit ${getHostname(item.url || '')}`}>
-                <Badge className="cursor-pointer bg-primary/10 text-black hover:bg-primary hover:text-white">
-                  Visit <ExternalLink className="w-3 h-3 ml-1 inline" />
-                </Badge>
-              </a>
-            </div>
-          ))}
-          {history.length === 0 && <div className="text-gray-600">No history found for the selected domains</div>}
-        </div>
-      )}
+              </div>
+            ))}
+            {history.length === 0 && <div className="text-gray-600">No history found for the selected domains</div>}
+          </div>
+        )}
+      </div>
 
-      <Button
-        onClick={handleSave}
-        className="mt-4 w-full bg-primary text-white"
-        disabled={!history.some(item => item.isSelected)}>
-        <ChevronRight className="w-4 h-4 mr-1 inline" />
-        Save History
-      </Button>
+      <div className="p-4  bg-white">
+        <Button
+          onClick={handleSave}
+          className="w-full bg-primary text-white"
+          disabled={!history.some(item => item.isSelected)}>
+          <ChevronRight className="w-4 h-4 mr-1 inline" />
+          Save History
+        </Button>
+      </div>
       <Toaster />
     </div>
   );
