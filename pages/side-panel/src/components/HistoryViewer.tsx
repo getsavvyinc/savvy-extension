@@ -177,10 +177,11 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
     const selectedItems = history.filter(item => item.isSelected);
     try {
       await client.post('/history', selectedItems);
+      setHistory(prevHistory => prevHistory.map(item => ({ ...item, isSelected: false })));
       toast({
         title: 'History saved',
-        description: 'Your selected history items have been saved successfully.',
-        duration: 3000,
+        description: "Use Savvy's CLI to finish sharing your expertise",
+        duration: 4000,
       });
     } catch (error: unknown) {
       const isConnectionError = isAxiosError(error) && (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED');
@@ -292,7 +293,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         className="mt-4 w-full bg-primary text-white"
         disabled={!history.some(item => item.isSelected)}>
         <ChevronRight className="w-4 h-4 mr-1 inline" />
-        Save Selected History
+        Save History
       </Button>
       <Toaster />
     </div>
