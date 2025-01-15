@@ -5,10 +5,12 @@ import { useToast } from '@src/hooks/use-toast';
 import { Toaster } from '@src/components/ui/toaster';
 import { ToastAction } from '@src/components/ui/toast';
 import { Badge } from '@src/components/ui/badge';
-import { ExternalLink, ChevronRight, ClipboardIcon } from 'lucide-react';
+import { ExternalLink, ChevronRight, ClipboardIcon, InfoIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
 import { useLocalClient } from '@extension/shared/lib/hooks/useAPI';
 import { isAxiosError } from 'axios';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@src/components/ui/tooltip';
+import { ScrollArea } from '@src/components/ui/scroll-area';
 
 interface HistoryItem extends chrome.history.HistoryItem {
   isSelected?: boolean;
@@ -180,7 +182,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
       setHistory(prevHistory => prevHistory.map(item => ({ ...item, isSelected: false })));
       toast({
         title: 'History Saved',
-        description: <span className="font-light">Use Savvy's CLI to finish sharing your expertise</span>,
+        description: <span className="font-light">Use Savvy&apos;s CLI to finish sharing your expertise</span>,
         duration: 4000,
       });
     } catch (error: unknown) {
@@ -218,8 +220,8 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   };
 
   return (
-    <div className="flex flex-col max-h-screen">
-      <div className="p-4">
+    <div className="flex flex-col max-h-scren">
+      <div className="p-4  bg-white">
         <div className="flex items-center font-light">
           <label htmlFor="time-range" className="text-sm font-normal text-gray-700 mr-2">
             Time Range
@@ -239,7 +241,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4">
         {loading ? (
           <div className="text-gray-600">Loading history...</div>
         ) : (
@@ -292,12 +294,38 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                 </a>
               </div>
             ))}
-            {history.length === 0 && <div className="text-gray-600">No history found for the selected domains</div>}
+            {history.length === 0 && (
+              <div className="flex flex-row gap-2">
+                <div className="text-gray-600 text-sm font-medium text-pretty">
+                  No history for this time range. Try a different time range.
+                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent className="overflow-y-scroll">
+                      <ScrollArea className="h-72 w-64 rounded-md">
+                        <div className="p-4">
+                          <p className="font-light">Savvy only shows history for domains that match:</p>
+                          <br />
+                          <ul className="list-disc ml-4 font-thin">
+                            {allowedDomains.map(domain => (
+                              <li key={domain}>{domain}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </ScrollArea>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      <div className="p-4 font-normal bg-white">
+      <div className="p-4 bg-white sticky bottom-0">
         <Button
           onClick={handleSave}
           className="w-full bg-primary text-white"
@@ -305,8 +333,8 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
           <ChevronRight className="w-4 h-4 mr-1 inline" />
           Save History
         </Button>
+        <Toaster />
       </div>
-      <Toaster />
     </div>
   );
 };
