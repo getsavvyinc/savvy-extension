@@ -179,8 +179,8 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
       await client.post('/history', selectedItems);
       setHistory(prevHistory => prevHistory.map(item => ({ ...item, isSelected: false })));
       toast({
-        title: 'History saved',
-        description: "Use Savvy's CLI to finish sharing your expertise",
+        title: 'History Saved',
+        description: <span className="font-light">Use Savvy's CLI to finish sharing your expertise</span>,
         duration: 4000,
       });
     } catch (error: unknown) {
@@ -191,13 +191,16 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
           variant: 'destructive',
           duration: Infinity,
           description: (
-            <span className="text-pretty">
+            <span className="text-pretty font-light">
               {' '}
-              Run <strong>savvy record history</strong> in your terminal and try again.
+              Run <span className="font-mono font-medium">savvy record history</span> in your terminal and try again.
             </span>
           ),
           action: (
-            <ToastAction altText="Copy Command" onClick={() => navigator.clipboard.writeText('savvy record history')}>
+            <ToastAction
+              className="font-normal"
+              altText="Copy Command"
+              onClick={() => navigator.clipboard.writeText('savvy record history')}>
               <ClipboardIcon className="w-4 h-4 mr-1 inline" /> Copy Command
             </ToastAction>
           ),
@@ -242,7 +245,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         ) : (
           <div className="space-y-2">
             {!loading && history.length >= 2 && (
-              <div className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-gray-50 mb-2">
+              <div className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-primary/10 mb-2">
                 <Checkbox
                   id="select-all"
                   checked={history.every(item => item.isSelected)}
@@ -294,7 +297,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         )}
       </div>
 
-      <div className="p-4  bg-white">
+      <div className="p-4 font-normal bg-white">
         <Button
           onClick={handleSave}
           className="w-full bg-primary text-white"
