@@ -237,7 +237,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
       {loading ? (
         <div className="text-gray-600">Loading history...</div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 h-4/5 overflow-y-auto">
           {!loading && history.length >= 2 && (
             <div className="flex items-center rounded bg-white p-3 shadow-sm hover:bg-gray-50 mb-2">
               <Checkbox
