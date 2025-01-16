@@ -55,6 +55,7 @@ const manifest = withSidePanel({
     128: 'icon-128.png',
     64: 'icon-64.png',
     48: 'icon-48.png',
+    34: 'icon-34.png',
   },
   content_scripts: [
     {
