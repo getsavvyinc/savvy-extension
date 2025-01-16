@@ -35,6 +35,19 @@ const TIME_RANGES = [
   { label: '120 hours', hours: 120 },
 ];
 
+const DENIED_DOMAINS = [
+  'chrome://',
+  'x.com',
+  'facebook.com',
+  'linkedin.com',
+  'instagram.com',
+  'twitter.com',
+  'reddit.com',
+  'twitch.tv',
+  'zoom.us',
+  'zoom.com',
+];
+
 const ALLOWED_DOMAINS = [
   // Developer tools & documentation
   'getsavvy.so',
@@ -152,8 +165,10 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         maxResults: 10000,
       });
 
+      // filter out denied domains
+      const filterOutDeniedDomains = items.filter(item => !DENIED_DOMAINS.some(domain => item.url!.includes(domain)));
       // Filter items by allowed domains
-      const filteredItems = items.filter(item =>
+      const filteredItems = filterOutDeniedDomains.filter(item =>
         item.url ? allowedDomains.some(domain => item.url!.includes(domain)) : false,
       );
 
