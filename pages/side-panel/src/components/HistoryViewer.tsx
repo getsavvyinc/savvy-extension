@@ -56,6 +56,10 @@ const ALLOWED_DOMAINS = [
   'mode',
   'posthog',
   'postman',
+  'statsig',
+  'replit',
+  'repl.it',
+  'launchdarkly',
 
   // Cloud platforms
   'aws.', // Matches aws.amazon.com, aws.internal etc
