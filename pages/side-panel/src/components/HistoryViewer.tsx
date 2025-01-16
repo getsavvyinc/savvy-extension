@@ -309,7 +309,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                       <ScrollArea className="h-72 w-64 rounded-md">
                         <div className="p-4">
                           <ul className="list-disc ml-4 font-thin">
-                            {allowedDomains.map(domain => (
+                            {[...allowedDomains].sort().map(domain => (
                               <li key={domain}>{domain}</li>
                             ))}
                           </ul>
