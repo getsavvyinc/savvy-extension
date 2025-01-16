@@ -5,7 +5,7 @@ import { useToast } from '@src/hooks/use-toast';
 import { Toaster } from '@src/components/ui/toaster';
 import { ToastAction } from '@src/components/ui/toast';
 import { Badge } from '@src/components/ui/badge';
-import { ExternalLink, ChevronRight, ClipboardIcon, InfoIcon } from 'lucide-react';
+import { ExternalLink, ChevronRight, ClipboardIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
 import { useLocalClient } from '@extension/shared/lib/hooks/useAPI';
 import { isAxiosError } from 'axios';
