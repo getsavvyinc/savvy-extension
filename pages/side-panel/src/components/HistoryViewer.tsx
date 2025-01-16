@@ -295,20 +295,19 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
               </div>
             ))}
             {history.length === 0 && (
-              <div className="flex flex-row gap-2">
-                <div className="text-gray-600 text-sm font-medium text-pretty">
-                  No history for this time range. Try a different time range.
-                </div>
+              <div className="inline">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                      <div className="inline text-gray-600 text-sm font-medium text-pretty">
+                        Savvy only includes domains matching
+                        <span className="font-medium underline underline-offset-2"> popular devtools.</span> Try a
+                        different time range.
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent className="overflow-y-scroll">
                       <ScrollArea className="h-72 w-64 rounded-md">
                         <div className="p-4">
-                          <p className="font-light">Savvy only shows history for domains that match:</p>
-                          <br />
                           <ul className="list-disc ml-4 font-thin">
                             {allowedDomains.map(domain => (
                               <li key={domain}>{domain}</li>
@@ -325,16 +324,18 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
         )}
       </div>
 
-      <div className="p-4 bg-white sticky bottom-0">
-        <Button
-          onClick={handleSave}
-          className="w-full bg-primary text-white"
-          disabled={!history.some(item => item.isSelected)}>
-          <ChevronRight className="w-4 h-4 mr-1 inline" />
-          Save History
-        </Button>
-        <Toaster />
-      </div>
+      {history.length > 0 && (
+        <div className="p-4 bg-white sticky bottom-0">
+          <Button
+            onClick={handleSave}
+            className="w-full bg-primary text-white"
+            disabled={!history.some(item => item.isSelected)}>
+            <ChevronRight className="w-4 h-4 mr-1 inline" />
+            Save History
+          </Button>
+          <Toaster />
+        </div>
+      )}
     </div>
   );
 };
