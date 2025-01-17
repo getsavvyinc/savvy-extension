@@ -32,15 +32,8 @@ function withSidePanel(manifest) {
 const manifest = withSidePanel({
   manifest_version: 3,
   default_locale: 'en',
-  key: `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm5oPIoF57rfmqpbnC25F
-YMutuEq2PePoBeRhJmgWA8NfzDRhoB+FmyTxGhkpQ7NRBEBmoPaE/EysXmpaUke7
-0R9RiVcCgPegxi9dReDmwxO7ttX4EabgJv1Ri6m/rLvze1mTUDjBhCBPvHyIvVon
-c9X7JCFUIzWgwp1qzdIbqrYKtY7sVh9AOy0hvWWNq8Oh6sl/KQ9Dkhuu3CZciV1s
-gxTeVWQW50W2xqZd2HQX48CPPvVvAFSY+6FExBtLzkM0i5N9GHRff4TjkpwhFDBw
-Nao0fEro0RyCAGbHznJmPMKAQtPEkuuVHv9iJ2hb4HNiIb3mTPiViNv/+qj98LM+
-WwIDAQAB
------END PUBLIC KEY-----`,
+
+  key: `LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFtNW9QSW9GNTdyZm1xcGJuQzI1RgpZTXV0dUVxMlBlUG9CZVJoSm1nV0E4TmZ6RFJob0IrRm15VHhHaGtwUTdOUkJFQm1vUGFFL0V5c1htcGFVa2U3CjBSOVJpVmNDZ1BlZ3hpOWRSZURtd3hPN3R0WDRFYWJnSnYxUmk2bS9yTHZ6ZTFtVFVEakJoQ0JQdkh5SXZWb24KYzlYN0pDRlVJeldnd3AxcXpkSWJxcllLdFk3c1ZoOUFPeTBodldXTnE4T2g2c2wvS1E5RGtodXUzQ1pjaVYxcwpneFRlVldRVzUwVzJ4cVpkMkhRWDQ4Q1BQdlZ2QUZTWSs2RkV4QnRMemtNMGk1TjlHSFJmZjRUamtwd2hGREJ3Ck5hbzBmRXJvMFJ5Q0FHYkh6bkptUE1LQVF0UEVrdXVWSHY5aUoyaGI0SE5pSWIzbVRQaVZpTnYvK3FqOThMTSsKV3dJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0t`,
   /**
    * if you want to support multiple languages, you can use the following reference
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
