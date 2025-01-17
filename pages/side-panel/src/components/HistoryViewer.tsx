@@ -319,7 +319,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                   <Tooltip>
                     <TooltipTrigger>
                       <div className="inline text-gray-600 text-sm font-medium text-pretty">
-                        Savvy only includes domains matching
+                        Savvy only shows links matching
                         <span className="font-medium underline underline-offset-2"> popular devtools.</span> Try a
                         different time range.
                       </div>
