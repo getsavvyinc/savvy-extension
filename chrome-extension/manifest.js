@@ -32,13 +32,22 @@ function withSidePanel(manifest) {
 const manifest = withSidePanel({
   manifest_version: 3,
   default_locale: 'en',
+  key: `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm5oPIoF57rfmqpbnC25F
+YMutuEq2PePoBeRhJmgWA8NfzDRhoB+FmyTxGhkpQ7NRBEBmoPaE/EysXmpaUke7
+0R9RiVcCgPegxi9dReDmwxO7ttX4EabgJv1Ri6m/rLvze1mTUDjBhCBPvHyIvVon
+c9X7JCFUIzWgwp1qzdIbqrYKtY7sVh9AOy0hvWWNq8Oh6sl/KQ9Dkhuu3CZciV1s
+gxTeVWQW50W2xqZd2HQX48CPPvVvAFSY+6FExBtLzkM0i5N9GHRff4TjkpwhFDBw
+Nao0fEro0RyCAGbHznJmPMKAQtPEkuuVHv9iJ2hb4HNiIb3mTPiViNv/+qj98LM+
+WwIDAQAB
+-----END PUBLIC KEY-----`,
   /**
    * if you want to support multiple languages, you can use the following reference
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
    */
   name: 'Savvy',
   version: packageJson.version,
-  description: 'Create, Share, and Run Worfklows from your browser & CLI',
+  description: 'Create, Share, and Run Worfklows from your Browser & CLI',
   host_permissions: ['http://localhost:8765/*', 'https://www.example.com/*'],
   permissions: ['storage', 'scripting', 'tabs', 'history'],
   background: {
