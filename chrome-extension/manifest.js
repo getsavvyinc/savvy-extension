@@ -42,7 +42,7 @@ const manifest = withSidePanel({
   version: packageJson.version,
   description: 'Create, Share, and Run Worfklows from your Browser & CLI',
   host_permissions: ['http://localhost:8765/*', 'https://www.example.com/*'],
-  permissions: ['storage', 'scripting', 'tabs', 'history'],
+  permissions: ['tabs', 'history'],
   background: {
     service_worker: 'background.iife.js',
     type: 'module',
