@@ -289,7 +289,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                   className="mr-2 data-[state=checked]:bg-primary/10"
                 />
                 <label htmlFor={`item-${index}`} className="flex-grow cursor-pointer">
-                  <div className="text-sm font-normal text-blue-600 hover:underline">
+                  <div className="text-sm font-normal text-gray-700 hover:underline-offset-2 hover:text-primary hover:underline">
                     {item.title || getHostname(item.url || '')}
                   </div>
                   <a
