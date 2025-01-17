@@ -93,6 +93,8 @@ const ALLOWED_DOMAINS = [
   'julius',
   'openai.com',
   'claude.ai',
+  'anthropic',
+  'perplexity.ai',
 
   // Monitoring & APM
   'grafana',
@@ -294,8 +296,8 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-light text-xs text-gray-500 hover:underline">
-                    {item.url}
+                    className="font-light text-xs text-gray-500 hover:underline text-ellipsis overflow-hidden">
+                    {item.url ? (item.url.length > 80 ? item.url.slice(0, 80) + '...' : item.url) : ''}
                   </a>
                   <div className="text-xs font-thin text-gray-500">
                     {new Date(item.lastVisitTime!).toLocaleString()}
