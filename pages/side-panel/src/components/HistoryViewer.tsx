@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@src/components/ui/button';
 import { Checkbox } from '@src/components/ui/checkbox';
-import { useToast } from '@src/hooks/use-toast';
-import { Toaster } from '@src/components/ui/toaster';
-import { ToastAction } from '@src/components/ui/toast';
+import { Toaster } from '@src/components/ui/sonner';
+import { toast } from 'sonner';
 import { Badge } from '@src/components/ui/badge';
 import { ExternalLink, ChevronRight, ClipboardIcon } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@src/components/ui/select';
@@ -155,7 +154,6 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
   const [loading, setLoading] = useState(false);
   const allowedDomains = ALLOWED_DOMAINS;
   const { client } = useLocalClient();
-  const { toast } = useToast();
 
   const fetchHistory = useCallback(async () => {
     setLoading(true);
@@ -180,7 +178,7 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedHours, allowedDomains, toast]);
+  }, [selectedHours, allowedDomains]);
 
   useEffect(() => {
     void fetchHistory();
@@ -201,40 +199,39 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
     try {
       await client.post('/history', selectedItems);
       setHistory(prevHistory => prevHistory.map(item => ({ ...item, isSelected: false })));
-      toast({
-        title: 'History Saved',
+      toast.success('History Saved', {
         description: <span className="font-light">Use Savvy&apos;s CLI to finish sharing your expertise</span>,
+        closeButton: true,
         duration: 4000,
       });
     } catch (error: unknown) {
       const isConnectionError = isAxiosError(error) && (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED');
       if (isConnectionError) {
-        toast({
-          title: "Can't Connect to Savvy",
-          variant: 'destructive',
+        toast.error("Can't Connect to Savvy", {
+          closeButton: true,
           duration: Infinity,
           description: (
             <span className="text-pretty font-light">
-              {' '}
               Run <span className="font-mono font-medium">savvy record history</span> in your terminal and try again.
             </span>
           ),
           action: (
-            <ToastAction
-              className="font-normal"
-              altText="Copy Command"
-              onClick={() => navigator.clipboard.writeText('savvy record history')}>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                navigator.clipboard.writeText('savvy record history');
+                toast.dismiss();
+              }}>
               <ClipboardIcon className="w-4 h-4 mr-1 inline" /> Copy Command
-            </ToastAction>
+            </Button>
           ),
         });
       } else {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
+        toast.error('Error', {
+          closeButton: true,
+          duration: 8000,
           description:
             'An error occurred while saving your history. Please try again or contact us at support@getsavvy.so',
-          duration: 5000,
         });
       }
     }
@@ -354,9 +351,9 @@ export const HistoryViewer: React.FC<HistoryViewerProps> = () => {
             <ChevronRight className="w-4 h-4 mr-1 inline" />
             Save History
           </Button>
-          <Toaster />
         </div>
       )}
+      <Toaster richColors position="bottom-right" expand={true} visibleToasts={2} />
     </div>
   );
 };
