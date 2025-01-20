@@ -98,6 +98,7 @@ const ALLOWED_DOMAINS = [
   // Monitoring & APM
   'grafana',
   'newrelic',
+  'oodle',
   'prometheus',
   'kibana',
   'elasticsearch',
